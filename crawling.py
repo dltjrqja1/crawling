@@ -1,21 +1,30 @@
 import requests
+import re
 from bs4 import BeautifulSoup
-from selenium import webdriver
 
-driver = webdriver.Chrome('C:/Users/dltjr/Desktop/chromedriver_win32/chromedriver.exe')
-driver.implicitly_wait(3)
-driver.get('https://eis.cbnu.ac.kr/cbnuLogin')
+requests = requests.get('https://movie.naver.com/movie/running/current.nhn?order=reserve')
 
-driver.find_element_by_name('uid').send_keys('2018037049')
-driver.find_element_by_name('pswd').send_keys('!1601a0389')
+soup = BeautifulSoup(requests.content, 'html.parser')
 
-driver.find_element_by_xpath('//*[@id="commonLoginBtn"]').click()
-
-driver.get('https://eis.cbnu.ac.kr/CBNU/index.html')
-
-html = driver.page_source
-soup = BeautifulSoup(html, 'html.parser')
-
-#print(soup.find_all(''))
+totals = soup.find_all('dl', class_='lst_dsc')
 
 
+age_re = re.compile('ico_rating_*')
+title_re = re.compile('/movie/bi/mi/basic.nhn*')
+tag_del = re.compile('<+>')
+
+def find_contents(dl):
+    age = dl.find("span", {"class": age_re.search})
+    title = dl.find("a", {"href": title_re.search})
+    genres = dl.find_all("span", class_='link_txt')
+    genre = str(genres[0].get_text())
+    genre = genre.replace(',', "")
+    genre_list = genre.split()
+    print(age.get_text())
+    print(title.get_text())
+    print(genre_list)
+
+for total in totals:
+    find_contents(total)
+
+#print(totals)
