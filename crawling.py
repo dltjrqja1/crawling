@@ -30,7 +30,7 @@ def find_contents(dl,index):
     age = age.get_text() if age else "No Description"
     title = title.get_text() if title else "No Description"
     grade = grade.get_text() if grade else "No Description"
-    movie.loc[index] = {'title':[title], 'age':[age], 'Advance_rate':[rating], 'rating':[grade], 'genre':[genre_list]}
+    movie.loc[index] = {'title':title, 'age':age, 'Advance_rate':rating, 'rating':grade, 'genre':genre_list}
     index = index+1
     return index
 
