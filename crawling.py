@@ -30,7 +30,7 @@ def find_contents(dl,index):
     title = title.get_text() if title else "No Description"
     grade = grade.get_text() if grade else "No Description"
     print(age, title, genre_list, grade, run_time, rating)
-    movie.loc[index] = {'title':title, 'age':age, 'Advance_rate':grade, 'rating':rating, 'genre':genre_list}
+    movie.loc[index] = {'title':title, 'age':age, 'Advance_rate':rating, 'rating':grade, 'genre':genre_list}
     index = index+1
     return index
 
@@ -50,3 +50,4 @@ for total in totals:
     index = find_contents(total,index)
     res = res+1
 print(movie)
+movie.to_csv('./movie_df.csv',encoding='utf-8-sig',sep='\t')
