@@ -1,8 +1,40 @@
 import requests
 import re
+import pandas as pd
 from bs4 import BeautifulSoup
 
-requests = requests.get('https://movie.naver.com/movie/running/current.nhn?order=reserve')
+movie = pd.DataFrame({'title':[], 'age':[], 'Advance_rate':[], 'rating':[], 'genre':[]})
+index = 0
+def find_contents(dl,index):
+    age = dl.find("span", {"class": age_re.search})
+    title = dl.find("a", {"href": title_re.search})
+    genres = dl.find_all("span", class_='link_txt')
+    genre = str(genres[0].get_text())
+    genre = genre.replace(',', "")
+    genre_list = genre.split()
+    num = dl.find_all("span", class_='num')
+    grade = num[0]
+    rating = ""
+    if len(num) == 2:
+        rate = num[1]
+        rate = rate.get_text() if rate else "No Description"
+        rating = rate
+    tmp = dl.find_all("dd")
+    run_time = ""
+    for i in tmp:
+        m = run_time_re.search(str(i))
+        if m !=None:
+            run_time = m[0]
+            break
+    age = age.get_text() if age else "No Description"
+    title = title.get_text() if title else "No Description"
+    grade = grade.get_text() if grade else "No Description"
+    print(age, title, genre_list, grade, run_time, rating)
+    movie.loc[index] = {'title':title, 'age':age, 'Advance_rate':grade, 'rating':rating, 'genre':genre_list}
+    index = index+1
+    return index
+
+requests = requests.get('https://movie.naver.com/movie/running/current.nhn')
 
 soup = BeautifulSoup(requests.content, 'html.parser')
 
@@ -12,19 +44,9 @@ totals = soup.find_all('dl', class_='lst_dsc')
 age_re = re.compile('ico_rating_*')
 title_re = re.compile('/movie/bi/mi/basic.nhn*')
 tag_del = re.compile('<+>')
-
-def find_contents(dl):
-    age = dl.find("span", {"class": age_re.search})
-    title = dl.find("a", {"href": title_re.search})
-    genres = dl.find_all("span", class_='link_txt')
-    genre = str(genres[0].get_text())
-    genre = genre.replace(',', "")
-    genre_list = genre.split()
-    print(age.get_text())
-    print(title.get_text())
-    print(genre_list)
-
+run_time_re = re.compile('\d{2,3}분')
+res = 0
 for total in totals:
-    find_contents(total)
-
-#print(totals)
+    index = find_contents(total,index)
+    res = res+1
+print(movie)
