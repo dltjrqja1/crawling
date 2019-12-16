@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 
 movie = pd.DataFrame({'title':[], 'age':[], 'Advance_rate':[], 'rating':[], 'genre':[]})
 index = 0
+print(movie)
 def find_contents(dl,index):
     age = dl.find("span", {"class": age_re.search})
     title = dl.find("a", {"href": title_re.search})
@@ -29,8 +30,7 @@ def find_contents(dl,index):
     age = age.get_text() if age else "No Description"
     title = title.get_text() if title else "No Description"
     grade = grade.get_text() if grade else "No Description"
-    print(age, title, genre_list, grade, run_time, rating)
-    movie.loc[index] = {'title':title, 'age':age, 'Advance_rate':rating, 'rating':grade, 'genre':genre_list}
+    movie.loc[index] = {'title':[title], 'age':[age], 'Advance_rate':[rating], 'rating':[grade], 'genre':[genre_list]}
     index = index+1
     return index
 
@@ -50,4 +50,4 @@ for total in totals:
     index = find_contents(total,index)
     res = res+1
 print(movie)
-movie.to_csv('./movie_df.csv',encoding='utf-8-sig',sep='\t')
+movie.to_csv('./movie_df.csv',encoding='utf-8-sig',sep=',')
