@@ -3,7 +3,7 @@ import re
 import pandas as pd
 from bs4 import BeautifulSoup
 
-movie = pd.DataFrame({'title':[], 'age':[], 'Advance_rate':[], 'rating':[], 'genre':[]})
+movie = pd.DataFrame({'title':[], 'age':[], 'Advance_rate':[], 'rating':[], 'genres':[]})
 index = 0
 print(movie)
 def find_contents(dl,index):
@@ -11,8 +11,8 @@ def find_contents(dl,index):
     title = dl.find("a", {"href": title_re.search})
     genres = dl.find_all("span", class_='link_txt')
     genre = str(genres[0].get_text())
-    genre = genre.replace(',', "")
-    genre_list = genre.split()
+    genre = genre.replace(',', "").replace("\t","").replace("\n","").replace("\r","")
+    #genre_list = genre.split()
     num = dl.find_all("span", class_='num')
     grade = num[0]
     rating = ""
@@ -30,7 +30,11 @@ def find_contents(dl,index):
     age = age.get_text() if age else "No Description"
     title = title.get_text() if title else "No Description"
     grade = grade.get_text() if grade else "No Description"
-    movie.loc[index] = {'title':title, 'age':age, 'Advance_rate':rating, 'rating':grade, 'genre':genre_list}
+    if rating !='':
+        rating = float(rating)
+    if grade !='':
+        grade = float(grade)
+    movie.loc[index] = {'title':title, 'age':age, 'Advance_rate':rating, 'rating':grade, 'genres':genre}
     index = index+1
     return index
 
